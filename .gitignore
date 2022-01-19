@@ -2,3 +2,6 @@
 
 # .env file
 .env
+
+deployment.zip
+deploy.sh

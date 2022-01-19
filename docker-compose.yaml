@@ -1,23 +1,6 @@
-# Use postgres/example user/password credentials
 version: '3.1'
 
-volumes:
-  database-data:
-
-networks:
-  stack:
-    external: false
-
 services:
-  database:
-    image: postgres
-    restart: always
-    volumes:
-      - database-data:/var/lib/postgresql/data/
-    env_file: .env
-    networks:
-      - stack
-
   calendso:
     build:
       context: .
@@ -28,32 +11,8 @@ services:
         - NEXT_PUBLIC_LICENSE_CONSENT=${NEXT_PUBLIC_LICENSE_CONSENT}
         - NEXT_PUBLIC_TELEMETRY_KEY=${NEXT_PUBLIC_TELEMETRY_KEY}
     image: calendso/calendso:latest
+    platform: linux/amd64
     restart: always
-    networks:
-      - stack
     ports:
       - 3000:3000
     env_file: .env
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
-    depends_on:
-      - database
-
-# Optional use of Prisma Studio. In production, comment out or remove the section below to prevent unwanted access to your database.
-  studio:
-    image: calendso/calendso:latest
-    restart: always
-    networks:
-      - stack
-    ports:
-      - 5555:5555
-    env_file: .env
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
-    depends_on:
-      - database
-    command:
-      - npx
-      - prisma
-      - studio
-# END SECTION: Optional use of Prisma Studio.
